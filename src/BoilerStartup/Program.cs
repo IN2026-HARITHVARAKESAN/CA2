@@ -13,7 +13,7 @@ namespace BoilerStartup
         /// </summary>
         public static void Main()
         {
-            BoilerStartUpManager boilerStartUpManager = new BoilerStartUpManager();
+            BoilerStartUpManager boilerStartUpManager = new BoilerStartUpManager(new FileHandler());
 
             int userChoiceOfMenu;
             do

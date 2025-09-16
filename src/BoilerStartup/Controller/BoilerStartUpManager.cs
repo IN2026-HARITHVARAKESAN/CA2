@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using System.Timers;
+using BoilerStartup.Interface;
 using BoilerStartup.Models;
+using ConsoleTables;
 using Timer = System.Timers.Timer;
 
 namespace BoilerStartup.Controller
@@ -17,8 +19,10 @@ namespace BoilerStartup.Controller
         /// <summary>
         /// Initializes a new instance of the <see cref="BoilerStartUpManager"/> class.
         /// </summary>
-        public BoilerStartUpManager()
+        /// <param name="fileHandler">Instance of FileHandler</param>
+        public BoilerStartUpManager(IFileHandler fileHandler)
         {
+            this.FileHandler = fileHandler;
             this.SystemLog = new StringBuilder();
             this.Logger = new Logger();
             this.Logger.OnStatusChange += StatusChangeHandler;
@@ -56,6 +60,8 @@ namespace BoilerStartup.Controller
                 this.Logger.HandleInterlockSwitchChange();
             }
         }
+
+        private IFileHandler FileHandler { get; set; }
 
         private Logger Logger { get; set; }
 
@@ -139,7 +145,20 @@ namespace BoilerStartup.Controller
         /// </summary>
         public void ViewEventLog()
         {
-            Console.WriteLine(this.SystemLog);
+            string[] logs = this.SystemLog.ToString().Split("\n");
+            var table = new ConsoleTable("Date Time", "Event", "Event Data");
+            foreach (string line in logs)
+            {
+                string[] logData = line.Split(",");
+                if (logData.Length < 3)
+                {
+                    continue;
+                }
+
+                table.AddRow(logData[0], logData[1], logData[2]);
+            }
+
+            table.Write();
         }
 
         /// <summary>
@@ -213,7 +232,9 @@ namespace BoilerStartup.Controller
         /// </summary>
         private void StatusChangeHandler()
         {
-            this.SystemLog.AppendLine($"{DateTime.Now.ToString()}, Boiler Status Update, Boiler Status changed to {this.SystemStatus.ToString()}.");
+            string logData = $"{DateTime.Now.ToString()}, Boiler Status Update, Boiler Status changed to {this.SystemStatus.ToString()}.\n";
+            this.SystemLog.Append(logData);
+            this.FileHandler.AppendDataToFile(logData);
             this.UpdateStatusInConsole();
         }
 
@@ -222,9 +243,15 @@ namespace BoilerStartup.Controller
         /// </summary>
         private void InterlockSwitchChangeHandler()
         {
-            this.SystemLog.AppendLine($"{DateTime.Now.ToString()}, Toggle Interlock, Interlock Switch toggled to {this.InterlockSwitch.ToString()}.");
+            string logData = $"{DateTime.Now.ToString()}, Toggle Interlock, Interlock Switch toggled to {this.InterlockSwitch.ToString()}.\n";
+
+            this.SystemLog.Append(logData);
+            this.FileHandler.AppendDataToFile(logData);
         }
 
+        /// <summary>
+        /// Updates status to console
+        /// </summary>
         private void UpdateStatusInConsole()
         {
             int left = Console.CursorLeft;
