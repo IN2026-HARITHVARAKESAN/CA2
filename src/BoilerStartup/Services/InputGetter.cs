@@ -12,7 +12,7 @@
         public static string GetInput()
         {
             bool isValidInput = false;
-            string userInput;
+            string? userInput;
             do
             {
                 userInput = Console.ReadLine();

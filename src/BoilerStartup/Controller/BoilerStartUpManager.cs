@@ -25,8 +25,8 @@ namespace BoilerStartup.Controller
             this.FileHandler = fileHandler;
             this.SystemLog = new StringBuilder();
             this.Logger = new Logger();
-            this.Logger.OnStatusChange += StatusChangeHandler;
-            this.Logger.OnInterlockSwitchChange += InterlockSwitchChangeHandler;
+            this.Logger.OnStatusChange += this.StatusChangeHandler;
+            this.Logger.OnInterlockSwitchChange += this.InterlockSwitchChangeHandler;
             this.SystemStatus = Status.Lockout;
             this.InterlockSwitch = InterlockSwitchStatus.Open;
             this.TokenSource = new CancellationTokenSource();
