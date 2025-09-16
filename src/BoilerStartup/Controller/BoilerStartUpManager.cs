@@ -145,6 +145,10 @@ namespace BoilerStartup.Controller
         /// </summary>
         public void ViewEventLog()
         {
+            Console.Clear();
+
+            Console.WriteLine();
+            Console.WriteLine();
             string[] logs = this.SystemLog.ToString().Split("\n");
             var table = new ConsoleTable("Date Time", "Event", "Event Data");
             foreach (string line in logs)
@@ -159,6 +163,7 @@ namespace BoilerStartup.Controller
             }
 
             table.Write();
+            this.UpdateStatusInConsole();
         }
 
         /// <summary>
@@ -225,6 +230,7 @@ namespace BoilerStartup.Controller
 
             this.SystemStatus = Status.Lockout;
             this.InterlockSwitch = InterlockSwitchStatus.Open;
+            Console.WriteLine("\n\nError : Unknown error occurred");
         }
 
         /// <summary>
