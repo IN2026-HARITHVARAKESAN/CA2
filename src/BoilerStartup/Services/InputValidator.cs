@@ -20,6 +20,12 @@
             return true;
         }
 
+        /// <summary>
+        /// Validates the user given index
+        /// </summary>
+        /// <param name="userInput">Input given by the user</param>
+        /// <param name="count">Maximum available index</param>
+        /// <returns>Returns true if the index is valid else return false</returns>
         public static bool ValidateIndex(string userInput, int count)
         {
             if (int.TryParse(userInput, out int index) && index > 0 && index <= count)

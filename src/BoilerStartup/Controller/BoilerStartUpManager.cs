@@ -14,6 +14,9 @@ namespace BoilerStartup.Controller
 
         private InterlockSwitchStatus _interlockSwitch;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoilerStartUpManager"/> class.
+        /// </summary>
         public BoilerStartUpManager()
         {
             this.SystemLog = new StringBuilder();
@@ -64,7 +67,11 @@ namespace BoilerStartup.Controller
 
         private CancellationToken Token { get; set; }
 
-        public void ManageBolierOperation(int choice)
+        /// <summary>
+        /// Manages Boiler operations and navigate
+        /// </summary>
+        /// <param name="choice">User choice of menu</param>
+        public void ManageBoilerOperation(int choice)
         {
             switch (choice)
             {
@@ -92,8 +99,13 @@ namespace BoilerStartup.Controller
             }
         }
 
+        /// <summary>
+        /// Toggles Run interlock switch to open / close
+        /// </summary>
         public void ToggleRunInterlockSwitch()
         {
+            Console.Clear();
+
             if (this.InterlockSwitch == InterlockSwitchStatus.Open)
             {
                 this.InterlockSwitch = InterlockSwitchStatus.Closed;
@@ -106,8 +118,12 @@ namespace BoilerStartup.Controller
             Console.WriteLine($"Run Interlock switch toggled to {this.InterlockSwitch.ToString()}");
         }
 
+        /// <summary>
+        /// Resets Lockout to ready if interlock switch is closed
+        /// </summary>
         public void ResetLockout()
         {
+            Console.Clear();
             if (this.InterlockSwitch == InterlockSwitchStatus.Closed)
             {
                 this.SystemStatus = Status.Ready;
@@ -118,11 +134,18 @@ namespace BoilerStartup.Controller
             Console.WriteLine("Cannot reset lockout as interlock switch is opened...Try closing the switch");
         }
 
+        /// <summary>
+        /// Displays event log to the user
+        /// </summary>
         public void ViewEventLog()
         {
             Console.WriteLine(this.SystemLog);
         }
 
+        /// <summary>
+        /// Start Boiler operation like pre-purge, ignition and operational
+        /// </summary>
+        /// <param name="token">Cancellation token to abort the process</param>
         public void StartBoiler(CancellationToken token)
         {
             if (this.SystemStatus != Status.Ready)
@@ -139,8 +162,7 @@ namespace BoilerStartup.Controller
                     return;
                 }
 
-                this.SystemStatus++;
-                Console.WriteLine($"{this.SystemStatus} phase started");
+                this.SystemStatus = this.SystemStatus + 1;
                 if (phase == 3)
                 {
                     break;
@@ -150,8 +172,12 @@ namespace BoilerStartup.Controller
             }
         }
 
+        /// <summary>
+        /// Stops Boiler when it is running
+        /// </summary>
         public void StopBoiler()
         {
+            Console.Clear();
             if (this.SystemStatus == Status.Ready || this.SystemStatus == Status.Lockout)
             {
                 Console.WriteLine("Boiler is not yet started.");
@@ -166,8 +192,12 @@ namespace BoilerStartup.Controller
             }
         }
 
+        /// <summary>
+        /// Simulate Errors in boiler
+        /// </summary>
         public void SimulateError()
         {
+            Console.Clear();
             if (this.SystemStatus != Status.Operational)
             {
                 Console.WriteLine("Cannot simulate error.\nYou can only simulate error when the boiler state is operational.");
@@ -178,14 +208,37 @@ namespace BoilerStartup.Controller
             this.InterlockSwitch = InterlockSwitchStatus.Open;
         }
 
-        public void StatusChangeHandler()
+        /// <summary>
+        /// System status change handler
+        /// </summary>
+        private void StatusChangeHandler()
         {
             this.SystemLog.AppendLine($"{DateTime.Now.ToString()}, Boiler Status Update, Boiler Status changed to {this.SystemStatus.ToString()}.");
+            this.UpdateStatusInConsole();
         }
 
-        public void InterlockSwitchChangeHandler()
+        /// <summary>
+        /// Interlock switch update handler
+        /// </summary>
+        private void InterlockSwitchChangeHandler()
         {
             this.SystemLog.AppendLine($"{DateTime.Now.ToString()}, Toggle Interlock, Interlock Switch toggled to {this.InterlockSwitch.ToString()}.");
+        }
+
+        private void UpdateStatusInConsole()
+        {
+            int left = Console.CursorLeft;
+            int top = Console.CursorTop;
+
+            Console.CursorLeft = 0;
+            Console.CursorTop = 1;
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"System Status : {this.SystemStatus.ToString()}                ");
+            Console.ResetColor();
+
+            Console.CursorLeft = left;
+            Console.CursorTop = top;
         }
     }
 }

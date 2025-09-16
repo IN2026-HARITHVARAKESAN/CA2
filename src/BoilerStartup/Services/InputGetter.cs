@@ -28,6 +28,11 @@
             return userInput;
         }
 
+        /// <summary>
+        /// Gets index of the choice from the user
+        /// </summary>
+        /// <param name="count">Maximum available index</param>
+        /// <returns>returns integer of user choice</returns>
         public static int GetIndex(int count)
         {
             bool isValidIndex = false;

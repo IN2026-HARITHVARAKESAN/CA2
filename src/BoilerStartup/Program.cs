@@ -18,10 +18,18 @@ namespace BoilerStartup
             int userChoiceOfMenu;
             do
             {
+                Console.WriteLine(
+                    "\n[1].Start Boiler Sequence\r\n" +
+                    "[2].Stop Boiler Sequence\r\n" +
+                    "[3].Simulate Boiler Error.\r\n" +
+                    "[4].Toggle Run Interlock Switch\r\n" +
+                    "[5].Reset Lockout\r\n" +
+                    "[6].View Event Log\r\n" +
+                    "[7].Exit Application\r\n");
                 Console.Write("Enter Your Choice of index : ");
                 userChoiceOfMenu = InputGetter.GetIndex(7);
 
-                boilerStartUpManager.ManageBolierOperation(userChoiceOfMenu);
+                boilerStartUpManager.ManageBoilerOperation(userChoiceOfMenu);
             }
             while (userChoiceOfMenu != 7);
         }
